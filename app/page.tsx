@@ -31,11 +31,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowRight,
   Calendar as CalendarIcon,
   ChevronsUpDown,
 } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 
 const locations = ["delhi", "mumbai"];
@@ -240,6 +242,100 @@ const Home = () => {
           </CardContent>
         </Card>
       )}
+      <Tabs defaultValue="food" className="mt-10">
+        <TabsList className="bg-transparent">
+          <TabsTrigger value="food" asChild>
+            <Button variant={"ghost"} className="text-white">
+              Food & Beverage
+            </Button>
+          </TabsTrigger>
+          <TabsTrigger value="baggage" asChild>
+            <Button variant={"ghost"} className="text-white">
+              Baggage
+            </Button>
+          </TabsTrigger>
+          <TabsTrigger value="combo" asChild>
+            <Button variant={"ghost"} className="text-white">
+              Combo
+            </Button>
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="food" className="flex gap-10">
+          <Card className="overflow-hidden border-none w-[256px]">
+            <Image src="/food-1.avif" alt="food" width={256} height={256} />
+            <CardHeader>
+              <CardTitle className="mt-5">6E Eats</CardTitle>
+              <CardDescription>
+                Delectable prepaprations now on-board. Bookings open!
+              </CardDescription>
+            </CardHeader>
+          </Card>
+          <Card className="overflow-hidden border-none w-[256px]">
+            <Image src="/food-2.avif" alt="food" width={256} height={256} />
+            <CardHeader>
+              <CardTitle className="mt-5">One for the skies</CardTitle>
+              <CardDescription>
+                Pre-book your favorite alcoholic beverage.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </TabsContent>
+        <TabsContent value="baggage" className="flex gap-10">
+          <Card className="overflow-hidden border-none w-[256px]">
+            <Image
+              src="/baggage-1.avif"
+              alt="baggage"
+              width={256}
+              height={256}
+            />
+            <CardHeader>
+              <CardTitle className="mt-5">
+                Excess Baggage/ Additional Piece
+              </CardTitle>
+              <CardDescription>
+                Pre-book any excess check-in baggage and save up to 20%.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+          <Card className="overflow-hidden border-none w-[256px]">
+            <Image
+              src="/baggage-2.avif"
+              alt="baggage"
+              width={256}
+              height={256}
+            />
+            <CardHeader>
+              <CardTitle className="mt-5">
+                Delayed & Lost Baggage Protection
+              </CardTitle>
+              <CardDescription>
+                Get compensated if your checked-in baggage is delayed, or lost.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </TabsContent>
+        <TabsContent value="combo" className="flex gap-10">
+          <Card className="overflow-hidden border-none w-[256px]">
+            <Image src="/combo-1.avif" alt="combo" width={256} height={256} />
+            <CardHeader>
+              <CardTitle className="mt-5">6E Prime</CardTitle>
+              <CardDescription>
+                Get a preferred seat, snack combo, priority check-in and anytime
+                boarding – all in one.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+          <Card className="overflow-hidden border-none w-[256px]">
+            <Image src="/combo-2.avif" alt="combo" width={256} height={256} />
+            <CardHeader>
+              <CardTitle className="mt-5">6E Seat & Eat</CardTitle>
+              <CardDescription>
+                Get your preferred seat, and a snack combo on your next flight.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </>
   );
 };
