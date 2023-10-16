@@ -196,25 +196,21 @@ const Home = () => {
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
             {flights.map((flight) => (
-              <Dialog
-                onOpenChange={setDialogOpen}
-                open={dialogOpen}
-                key={flight.name}
-              >
-                <Card>
-                  <CardHeader>
-                    <CardTitle>{flight.name}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex flex-col gap-5">
-                    <CardDescription>
-                      {flight.from.toLocaleUpperCase()} to{" "}
-                      {flight.to.toLocaleUpperCase()}
-                    </CardDescription>
-                    <CardDescription>
-                      {flight.date.toLocaleDateString()}
-                    </CardDescription>
-                  </CardContent>
-                  <CardFooter className="max-sm:flex-col max-sm:items-stretch">
+              <Card key={flight.name}>
+                <CardHeader>
+                  <CardTitle>{flight.name}</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-5">
+                  <CardDescription>
+                    {flight.from.toLocaleUpperCase()} to{" "}
+                    {flight.to.toLocaleUpperCase()}
+                  </CardDescription>
+                  <CardDescription>
+                    {flight.date.toLocaleDateString()}
+                  </CardDescription>
+                </CardContent>
+                <CardFooter className="max-sm:flex-col max-sm:items-stretch">
+                  <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
                     <DialogTrigger asChild>
                       <Button>Book</Button>
                     </DialogTrigger>
@@ -235,15 +231,16 @@ const Home = () => {
                         </Button>
                       </DialogFooter>
                     </DialogContent>
-                  </CardFooter>
-                </Card>
-              </Dialog>
+                  </Dialog>
+                </CardFooter>
+              </Card>
             ))}
           </CardContent>
         </Card>
       )}
+
       <Tabs defaultValue="food" className="mt-10">
-        <TabsList className="bg-transparent">
+        <TabsList className="bg-transparent gap-5">
           <TabsTrigger value="food" asChild>
             <Button variant={"ghost"} className="text-white">
               Food & Beverage
@@ -260,8 +257,8 @@ const Home = () => {
             </Button>
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="food" className="flex gap-10">
-          <Card className="overflow-hidden border-none w-[256px]">
+        <TabsContent value="food" className="flex gap-10 mt-0">
+          <Card className="overflow-hidden border-none w-[256px] mt-2">
             <Image src="/food-1.avif" alt="food" width={256} height={256} />
             <CardHeader>
               <CardTitle className="mt-5">6E Eats</CardTitle>
@@ -270,7 +267,7 @@ const Home = () => {
               </CardDescription>
             </CardHeader>
           </Card>
-          <Card className="overflow-hidden border-none w-[256px]">
+          <Card className="overflow-hidden border-none w-[256px] mt-2">
             <Image src="/food-2.avif" alt="food" width={256} height={256} />
             <CardHeader>
               <CardTitle className="mt-5">One for the skies</CardTitle>
@@ -280,8 +277,8 @@ const Home = () => {
             </CardHeader>
           </Card>
         </TabsContent>
-        <TabsContent value="baggage" className="flex gap-10">
-          <Card className="overflow-hidden border-none w-[256px]">
+        <TabsContent value="baggage" className="flex gap-10 mt-0">
+          <Card className="overflow-hidden border-none w-[256px] mt-2">
             <Image
               src="/baggage-1.avif"
               alt="baggage"
@@ -297,7 +294,7 @@ const Home = () => {
               </CardDescription>
             </CardHeader>
           </Card>
-          <Card className="overflow-hidden border-none w-[256px]">
+          <Card className="overflow-hidden border-none w-[256px] mt-2">
             <Image
               src="/baggage-2.avif"
               alt="baggage"
@@ -314,8 +311,8 @@ const Home = () => {
             </CardHeader>
           </Card>
         </TabsContent>
-        <TabsContent value="combo" className="flex gap-10">
-          <Card className="overflow-hidden border-none w-[256px]">
+        <TabsContent value="combo" className="flex gap-10 mt-0">
+          <Card className="overflow-hidden border-none w-[256px] mt-2">
             <Image src="/combo-1.avif" alt="combo" width={256} height={256} />
             <CardHeader>
               <CardTitle className="mt-5">6E Prime</CardTitle>
@@ -325,7 +322,7 @@ const Home = () => {
               </CardDescription>
             </CardHeader>
           </Card>
-          <Card className="overflow-hidden border-none w-[256px]">
+          <Card className="overflow-hidden border-none w-[256px] mt-2">
             <Image src="/combo-2.avif" alt="combo" width={256} height={256} />
             <CardHeader>
               <CardTitle className="mt-5">6E Seat & Eat</CardTitle>
