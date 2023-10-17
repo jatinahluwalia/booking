@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Command,
   CommandEmpty,
@@ -26,60 +27,24 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { flightss, locations } from "@/constants";
+import { CheckedState } from "@radix-ui/react-checkbox";
 import {
   ArrowRight,
   Calendar as CalendarIcon,
+  Check,
   ChevronsUpDown,
+  Filter,
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-
-const locations = ["delhi", "mumbai"];
-
-const flightss = [
-  {
-    from: "delhi",
-    to: "mumbai",
-    date: new Date(2023, 10, 16),
-    name: "Flight 1",
-  },
-  {
-    from: "delhi",
-    to: "mumbai",
-    date: new Date(2023, 10, 17),
-    name: "Flight 2",
-  },
-  {
-    from: "delhi",
-    to: "mumbai",
-    date: new Date(2023, 10, 18),
-    name: "Flight 3",
-  },
-  {
-    from: "mumbai",
-    to: "delhi",
-    date: new Date(2023, 10, 16),
-    name: "Flight 4",
-  },
-  {
-    from: "mumbai",
-    to: "delhi",
-    date: new Date(2023, 10, 17),
-    name: "Flight 5",
-  },
-  {
-    from: "mumbai",
-    to: "delhi",
-    date: new Date(2023, 10, 18),
-    name: "Flight 6",
-  },
-];
 
 const Home = () => {
   const [fromValue, setFromValue] = useState("");
@@ -89,6 +54,10 @@ const Home = () => {
   const [dateValue, setDateValue] = useState<Date>();
   const [flights, setFlights] = useState<typeof flightss | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [jetAirChecked, setJetAirChecked] = useState<CheckedState>(false);
+  const [spiceJetChecked, setSpiceJetChecked] = useState<CheckedState>(false);
+  const [vistaraChecked, setVistaraChecked] = useState<CheckedState>(false);
 
   const handleFlights = () => {
     const filteredFlights = flightss.filter(
@@ -98,13 +67,86 @@ const Home = () => {
   };
 
   return (
-    <>
-      <Card>
-        <CardHeader>
+    <main>
+      <Card className="max-[1200px]:rounded-none">
+        <CardHeader className="relative">
           <CardTitle>Search Flights</CardTitle>
           <CardDescription>
             Select your origin and destination here
           </CardDescription>
+          <Dialog open={filterOpen} onOpenChange={setFilterOpen}>
+            <DialogTrigger asChild>
+              <Button className="absolute right-8 top-4 flex items-center justify-center">
+                <Filter />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Filter</DialogTitle>
+                <DialogDescription>
+                  Filter your flights by airlines.
+                </DialogDescription>
+              </DialogHeader>
+              <div>
+                <h3 className="font-[500] text-xl">Airline</h3>
+                <div className="flex flex-col gap-2 px-4 mt-2">
+                  <div className="flex gap-2 items-center">
+                    <Checkbox
+                      id="jetair"
+                      checked={jetAirChecked === true}
+                      onCheckedChange={setJetAirChecked}
+                      onChange={(e) => console.log("e")}
+                    />
+                    <Label htmlFor="jetair">Jet Airways</Label>
+                  </div>
+                  <div className="flex gap-2 items-center">
+                    <Checkbox
+                      id="vistara"
+                      checked={vistaraChecked === true}
+                      onCheckedChange={setVistaraChecked}
+                    />
+                    <Label htmlFor="vistara">Vistara</Label>
+                  </div>
+                  <div className="flex gap-2 items-center">
+                    <Checkbox
+                      id="spicejet"
+                      checked={spiceJetChecked === true}
+                      onCheckedChange={setSpiceJetChecked}
+                    />
+                    <Label htmlFor="spicejet">SpiceJet</Label>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter className="gap-2">
+                <Button
+                  onClick={() => {
+                    const checked: string[] = [];
+                    jetAirChecked === true && checked.push("Jet Airways");
+                    spiceJetChecked === true && checked.push("SpiceJet");
+                    vistaraChecked === true && checked.push("Vistara");
+
+                    const filteredFlights = flights?.filter((flight) =>
+                      checked.includes(flight.name)
+                    );
+                    if (!filteredFlights) return setFilterOpen(false);
+
+                    setFlights(filteredFlights);
+
+                    setFilterOpen(false);
+                  }}
+                >
+                  Filter
+                </Button>
+                <Button
+                  onClick={() => {
+                    setFilterOpen(false);
+                  }}
+                >
+                  Close
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </CardHeader>
         <CardContent className="flex gap-5 items-center max-sm:flex-col max-sm:items-stretch">
           <Popover open={fromOpen} onOpenChange={setFromOpen}>
@@ -118,16 +160,21 @@ const Home = () => {
               <Command>
                 <CommandInput placeholder="Search places..." />
                 <CommandEmpty>No such place</CommandEmpty>
-                <CommandGroup>
+                <CommandGroup value="From">
                   {locations.map((location) => (
                     <CommandItem
                       key={location}
+                      value={location}
                       onSelect={(value) => {
                         setFromValue(value);
                         setFromOpen(false);
                       }}
+                      className="gap-2"
                     >
-                      {location.toLocaleUpperCase()}
+                      {fromValue === location.toLowerCase() && (
+                        <Check width={15} height={15} />
+                      )}
+                      {location.toUpperCase()}
                     </CommandItem>
                   ))}
                 </CommandGroup>
@@ -146,16 +193,21 @@ const Home = () => {
               <Command>
                 <CommandInput placeholder="Search places..." />
                 <CommandEmpty>No such place</CommandEmpty>
-                <CommandGroup>
+                <CommandGroup value="To">
                   {locations.map((location) => (
                     <CommandItem
                       key={location}
+                      value={location}
                       onSelect={(value) => {
                         setToValue(value);
                         setToOpen(false);
                       }}
+                      className="gap-2"
                     >
-                      {location.toLocaleUpperCase()}
+                      {toValue === location.toLowerCase() && (
+                        <Check width={15} height={15} />
+                      )}
+                      {location.toUpperCase()}
                     </CommandItem>
                   ))}
                 </CommandGroup>
@@ -195,8 +247,8 @@ const Home = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
-            {flights.map((flight) => (
-              <Card key={flight.name}>
+            {flights.map((flight, i) => (
+              <Card key={flight.name + i}>
                 <CardHeader>
                   <CardTitle>{flight.name}</CardTitle>
                 </CardHeader>
@@ -210,28 +262,7 @@ const Home = () => {
                   </CardDescription>
                 </CardContent>
                 <CardFooter className="max-sm:flex-col max-sm:items-stretch">
-                  <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button>Book</Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Flight</DialogTitle>
-                        <DialogDescription>
-                          Your Flight Booked Successfully
-                        </DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter>
-                        <Button
-                          onClick={() => {
-                            setDialogOpen(false);
-                          }}
-                        >
-                          Close
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+                  <Button onClick={() => setDialogOpen(true)}>Book</Button>
                 </CardFooter>
               </Card>
             ))}
@@ -239,7 +270,27 @@ const Home = () => {
         </Card>
       )}
 
-      <Tabs defaultValue="food" className="mt-10">
+      <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Flight</DialogTitle>
+            <DialogDescription>
+              Your Flight Booked Successfully
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                setDialogOpen(false);
+              }}
+            >
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Tabs defaultValue="food" className="mt-10 px-5">
         <TabsList className="bg-transparent gap-5">
           <TabsTrigger value="food" asChild>
             <Button variant={"ghost"} className="text-white">
@@ -257,8 +308,11 @@ const Home = () => {
             </Button>
           </TabsTrigger>
         </TabsList>
-        <TabsContent value="food" className="flex gap-10 mt-0">
-          <Card className="overflow-hidden border-none w-[256px] mt-2">
+        <TabsContent
+          value="food"
+          className="flex gap-10 mt-0 max-sm:flex-col max-sm:items-center"
+        >
+          <Card className="overflow-hidden border-none w-[256px] mt-5">
             <Image src="/food-1.avif" alt="food" width={256} height={256} />
             <CardHeader>
               <CardTitle className="mt-5">6E Eats</CardTitle>
@@ -267,7 +321,7 @@ const Home = () => {
               </CardDescription>
             </CardHeader>
           </Card>
-          <Card className="overflow-hidden border-none w-[256px] mt-2">
+          <Card className="overflow-hidden border-none w-[256px] mt-5">
             <Image src="/food-2.avif" alt="food" width={256} height={256} />
             <CardHeader>
               <CardTitle className="mt-5">One for the skies</CardTitle>
@@ -277,8 +331,11 @@ const Home = () => {
             </CardHeader>
           </Card>
         </TabsContent>
-        <TabsContent value="baggage" className="flex gap-10 mt-0">
-          <Card className="overflow-hidden border-none w-[256px] mt-2">
+        <TabsContent
+          value="baggage"
+          className="flex gap-10 mt-0 max-sm:flex-col max-sm:items-center"
+        >
+          <Card className="overflow-hidden border-none w-[256px] mt-5">
             <Image
               src="/baggage-1.avif"
               alt="baggage"
@@ -294,7 +351,7 @@ const Home = () => {
               </CardDescription>
             </CardHeader>
           </Card>
-          <Card className="overflow-hidden border-none w-[256px] mt-2">
+          <Card className="overflow-hidden border-none w-[256px] mt-5">
             <Image
               src="/baggage-2.avif"
               alt="baggage"
@@ -311,8 +368,11 @@ const Home = () => {
             </CardHeader>
           </Card>
         </TabsContent>
-        <TabsContent value="combo" className="flex gap-10 mt-0">
-          <Card className="overflow-hidden border-none w-[256px] mt-2">
+        <TabsContent
+          value="combo"
+          className="flex gap-10 mt-0 max-sm:flex-col max-sm:items-center"
+        >
+          <Card className="overflow-hidden border-none w-[256px] mt-5">
             <Image src="/combo-1.avif" alt="combo" width={256} height={256} />
             <CardHeader>
               <CardTitle className="mt-5">6E Prime</CardTitle>
@@ -322,7 +382,7 @@ const Home = () => {
               </CardDescription>
             </CardHeader>
           </Card>
-          <Card className="overflow-hidden border-none w-[256px] mt-2">
+          <Card className="overflow-hidden border-none w-[256px] mt-5">
             <Image src="/combo-2.avif" alt="combo" width={256} height={256} />
             <CardHeader>
               <CardTitle className="mt-5">6E Seat & Eat</CardTitle>
@@ -333,7 +393,7 @@ const Home = () => {
           </Card>
         </TabsContent>
       </Tabs>
-    </>
+    </main>
   );
 };
 export default Home;
